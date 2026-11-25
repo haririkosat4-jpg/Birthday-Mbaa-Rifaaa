@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selamat Ulang Tahun ke-24, Mbak Rifa! ✨</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Playfair Display, Plus Jakarta Sans, & Dancing Script -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        script: ['"Dancing Script"', 'cursive'],
+                    },
+                    colors: {
+                        cream: {
+                            50: '#FDFBF7',
+                            100: '#FAF5EB',
+                            200: '#F3E8D2',
+                        },
+                        rose: {
+                            dusty: '#D8A7B1',
+                            soft: '#F4E1E6',
+                            deep: '#B57B87',
+                        },
+                        gold: {
+                            light: '#E8D5B5',
+                            main: '#C59B5F',
+                            dark: '#9E7840',
+                        },
+                        charcoal: '#3A3238'
+                    },
+                    animation: {
+                        'float': 'float 4s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom animations & tactile card effects */
+        body {
+            background-color: #FDFBF7;
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(244, 225, 230, 0.5) 0px, transparent 50%),
+                radial-gradient(at 90% 20%, rgba(232, 213, 181, 0.4) 0px, transparent 50%),
+                radial-gradient(at 50% 90%, rgba(244, 225, 230, 0.4) 0px, transparent 50%);
+            color: #3A3238;
+            overflow-x: hidden;
+        }
+
+        /* Candle Flame Animation */
+        @keyframes flicker {
+            0%, 100% {
+                transform: scale(1) rotate(-2deg);
+                opacity: 0.95;
+            }
+            25% {
+                transform: scale(1.06, 0.96) rotate(2deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(0.96, 1.04) rotate(-1deg);
+                opacity: 0.9;
+            }
+            75% {
+                transform: scale(1.03, 0.98) rotate(3deg);
+                opacity: 1;
+            }
+        }
+
+        .flame {
+            transform-origin: bottom center;
+            animation: flicker 1.5s infinite ease-in-out;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .flame.blown-out {
+            opacity: 0 !important;
+            transform: scale(0) translateY(-10px) !important;
+            animation: none;
+        }
+
+        /* Smoke Animation when candle is blown out */
+        @keyframes smokeRise {
+            0% {
+                opacity: 0.8;
+                transform: translateY(0) scale(0.8);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-28px) scale(1.8);
+            }
+        }
+
+        .smoke-puff {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .smoke-puff.active {
+            animation: smokeRise 1.6s ease-out forwards;
+        }
+
+        /* Envelope Flap 3D Transition */
+        .envelope-wrapper {
+            perspective: 1000px;
+        }
+        .envelope-flap {
+            transform-origin: top center;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.4s;
+        }
+        .envelope-open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+        .envelope-letter {
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
+        }
+        .envelope-open .envelope-letter {
+            transform: translateY(-45px);
+        }
+
+        /* Wish Card Flip / Reveal */
+        .wish-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .wish-card:hover {
+            transform: translateY(-4px);
+        }
+
+        /* Confetti Canvas */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        /* Hide scrollbar cleanly while keeping scrollability */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FDFBF7;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #E8D5B5;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col items-center justify-center relative selection:bg-rose-soft selection:text-charcoal">
+
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Floating Audio Control Button -->
+    <div class="fixed top-4 right-4 z-40 flex items-center gap-2">
+        <button id="audio-toggle-btn" onclick="toggleAudio()" aria-label="Atur Musik Latar"
+            class="flex items-center gap-2 bg-white/80 backdrop-blur-md border border-gold-light/60 text-charcoal px-4 py-2.5 rounded-full shadow-sm hover:shadow-md hover:bg-white transition-all text-xs sm:text-sm font-medium cursor-pointer">
+            <span id="audio-icon" class="text-gold-main text-base">🔇</span>
+            <span id="audio-label" class="hidden sm:inline">Putar Melodi</span>
+        </button>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- STAGE 1: INTERACTIVE ENVELOPE SCREEN (OPENING)                        -->
+    <!-- ===================================================================== -->
+    <section id="envelope-stage" class="w-full max-w-md px-5 py-10 flex flex-col items-center justify-center min-h-screen transition-opacity duration-700">
+        
+        <div class="text-center mb-8 animate-float">
+            <span class="inline-block px-3.5 py-1 rounded-full bg-rose-soft/70 text-rose-deep text-xs font-semibold tracking-wider uppercase mb-3 border border-rose-dusty/30">
+                26 November 2026
+            </span>
+            <h1 class="font-serif text-3xl sm:text-4xl font-bold text-charcoal tracking-tight">
+                Sebuah Surat Kecil
+            </h1>
+            <p class="text-sm text-charcoal/70 mt-1.5">
+                Khusus untuk seseorang yang sangat spesial hari ini
+            </p>
+        </div>
+
+        <!-- Interactive Envelope -->
+        <div id="envelope-box" onclick="openEnvelope()" 
+            class="envelope-wrapper relative w-full max-w-[330px] sm:max-w-[360px] h-[230px] cursor-pointer group select-none my-4">
+            
+            <!-- Back of Envelope -->
+            <div class="absolute inset-0 bg-cream-200 rounded-2xl shadow-xl border border-gold-light/70"></div>
+
+            <!-- Letter Peek Inside -->
+            <div class="envelope-letter absolute inset-x-4 top-3 bottom-3 bg-white rounded-xl shadow-sm p-5 flex flex-col items-center justify-center text-center border border-gold-light/40 z-10">
+                <p class="font-script text-2xl text-gold-main">Untuk Mbak Rifa</p>
+                <p class="text-xs text-charcoal/60 mt-1">Babak Baru: 24 Tahun ✨</p>
+            </div>
+
+            <!-- Envelope Side & Bottom Flaps (SVG for crisp geometry) -->
+            <svg class="absolute inset-0 w-full h-full z-20 rounded-2xl pointer-events-none" viewBox="0 0 360 230" preserveAspectRatio="none">
+                <!-- Left Flap -->
+                <polygon points="0,0 185,125 0,230" fill="#F5EBDD" />
+                <!-- Right Flap -->
+                <polygon points="360,0 175,125 360,230" fill="#EFE2CE" />
+                <!-- Bottom Flap -->
+                <polygon points="0,230 180,110 360,230" fill="#FAF5EB" stroke="#E8D5B5" stroke-width="1" />
+            </svg>
+
+            <!-- Top Flap -->
+            <div class="envelope-flap absolute inset-x-0 top-0 h-[135px] z-30 pointer-events-none">
+                <svg class="w-full h-full drop-shadow-md" viewBox="0 0 360 135" preserveAspectRatio="none">
+                    <polygon points="0,0 360,0 180,130" fill="#F3E6D3" stroke="#E8D5B5" stroke-width="1" />
+                </svg>
+            </div>
+
+            <!-- Wax Seal Button -->
+            <div id="wax-seal" class="absolute left-1/2 top-[115px] -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-gradient-to-br from-rose-dusty to-rose-deep shadow-lg border-2 border-gold-light flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <div class="w-12 h-12 rounded-full border border-white/40 flex flex-col items-center justify-center text-white">
+                    <span class="font-serif font-bold text-sm tracking-widest">24</span>
+                    <span class="text-[9px] uppercase tracking-wider opacity-90">Buka</span>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="openEnvelope()" class="mt-8 px-6 py-3 rounded-full bg-charcoal text-cream-50 text-sm font-medium shadow-md hover:bg-gold-dark transition-colors flex items-center gap-2 cursor-pointer">
+            <span>Ketuk Amplop untuk Membuka</span>
+            <span>💌</span>
+        </button>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- STAGE 2: MAIN BIRTHDAY CARD CONTENT (HIDDEN INITIALLY)                -->
+    <!-- ===================================================================== -->
+    <main id="card-stage" class="hidden opacity-0 w-full max-w-2xl px-4 sm:px-6 py-12 sm:py-16 transition-opacity duration-1000">
+        
+        <!-- Main Card Container -->
+        <div class="bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-gold-light/60 overflow-hidden">
+            
+            <!-- Top Decorative Gold & Pastel Banner -->
+            <div class="bg-gradient-to-r from-rose-soft/60 via-cream-100 to-gold-light/40 px-6 py-8 sm:py-10 text-center border-b border-gold-light/40 relative">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 border border-gold-light/60 text-gold-dark text-xs font-semibold tracking-widest uppercase mb-4 shadow-xs">
+                    <span>✨ 26 November 2002 – 2026 ✨</span>
+                </div>
+                
+                <p class="font-script text-2xl sm:text-3xl text-rose-deep mb-1">
+                    Selamat Ulang Tahun ke-24,
+                </p>
+                <h1 class="font-serif text-4xl sm:text-5xl font-bold text-charcoal tracking-tight">
+                    Mbak Rifa
+                </h1>
+                <p class="text-xs sm:text-sm text-charcoal/70 mt-3 max-w-md mx-auto leading-relaxed">
+                    Dua puluh empat tahun penuh cerita, tumbuh menjadi pribadi yang hangat, anggun, dan selalu menginspirasi.
+                </p>
+            </div>
+
+            <!-- Interactive Birthday Cake with Number "24" Candles -->
+            <div class="px-6 py-8 sm:py-10 flex flex-col items-center border-b border-gold-light/30 bg-cream-50/40">
+                <div class="text-center mb-3">
+                    <span id="candle-instruction" class="inline-block px-4 py-1.5 rounded-full bg-gold-light/30 text-gold-dark text-xs sm:text-sm font-medium animate-pulse">
+                        🕯️ Pejamkan mata, buat permohonan, lalu klik lilin "24" untuk meniupnya!
+                    </span>
+                </div>
+
+                <!-- Interactive Cake SVG -->
+                <div id="cake-container" onclick="blowOutCandles()" role="button" tabindex="0" aria-label="Tiup lilin angka 24"
+                    class="relative w-full max-w-[290px] sm:max-w-[320px] cursor-pointer select-none group pt-4 pb-2 transition-transform duration-300 hover:scale-[1.02]">
+                    
+                    <svg viewBox="0 0 320 250" class="w-full h-auto drop-shadow-md">
+                        <!-- Soft Ambient Glow behind candles -->
+                        <circle id="candle-glow" cx="160" cy="55" r="55" fill="url(#glowGrad)" class="transition-opacity duration-700" />
+                        <defs>
+                            <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#FDE68A" stop-opacity="0.7" />
+                                <stop offset="100%" stop-color="#FDE68A" stop-opacity="0" />
+                            </radialGradient>
+                            <linearGradient id="goldCandle" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#E8C37D" />
+                                <stop offset="50%" stop-color="#C59B5F" />
+                                <stop offset="100%" stop-color="#9E7840" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Smoke Puffs (Appear after blowing out) -->
+                        <circle class="smoke-puff" id="smoke-1" cx="132" cy="40" r="6" fill="#CBD5E1" />
+                        <circle class="smoke-puff" id="smoke-2" cx="188" cy="40" r="6" fill="#CBD5E1" />
+
+                        <!-- Flame for "2" -->
+                        <g id="flame-2" class="flame">
+                            <path d="M132 18 C125 30, 126 42, 132 44 C138 42, 139 30, 132 18 Z" fill="#F59E0B" />
+                            <path d="M132 25 C129 32, 129 39, 132 41 C135 39, 135 32, 132 25 Z" fill="#FEF3C7" />
+                        </g>
+
+                        <!-- Flame for "4" -->
+                        <g id="flame-4" class="flame" style="animation-delay: 0.3s;">
+                            <path d="M188 18 C181 30, 182 42, 188 44 C194 42, 195 30, 188 18 Z" fill="#F59E0B" />
+                            <path d="M188 25 C185 32, 185 39, 188 41 C191 39, 191 32, 188 25 Z" fill="#FEF3C7" />
+                        </g>
+
+                        <!-- Candle Wicks -->
+                        <line x1="132" y1="43" x2="132" y2="52" stroke="#4B5563" stroke-width="2.5" stroke-linecap="round" />
+                        <line x1="188" y1="43" x2="188" y2="52" stroke="#4B5563" stroke-width="2.5" stroke-linecap="round" />
+
+                        <!-- Number "2" Candle -->
+                        <text x="132" y="96" text-anchor="middle" font-family="'Playfair Display', serif" font-weight="700" font-size="54" fill="url(#goldCandle)" stroke="#FFF" stroke-width="1.5">2</text>
+                        
+                        <!-- Number "4" Candle -->
+                        <text x="188" y="96" text-anchor="middle" font-family="'Playfair Display', serif" font-weight="700" font-size="54" fill="url(#goldCandle)" stroke="#FFF" stroke-width="1.5">4</text>
+
+                        <!-- Cake Plate -->
+                        <ellipse cx="160" cy="222" rx="135" ry="16" fill="#E8D5B5" />
+                        <ellipse cx="160" cy="219" rx="130" ry="13" fill="#FAF5EB" />
+
+                        <!-- Bottom Cake Tier -->
+                        <rect x="65" y="152" width="190" height="65" rx="14" fill="#F4E1E6" />
+                        <!-- Bottom Tier Cream Drip -->
+                        <path d="M65 162 Q80 176 95 162 Q110 178 125 162 Q140 175 155 162 Q170 178 185 162 Q200 175 215 162 Q230 178 245 162 L255 162 L255 156 Q255 150 245 150 L75 150 Q65 150 65 156 Z" fill="#FFFDF9" />
+                        <!-- Gold Ribbon on Bottom Tier -->
+                        <rect x="65" y="203" width="190" height="7" fill="#C59B5F" opacity="0.85" />
+
+                        <!-- Top Cake Tier -->
+                        <rect x="92" y="102" width="136" height="52" rx="12" fill="#E6C2CB" />
+                        <!-- Top Tier Frosting -->
+                        <path d="M92 112 Q105 125 118 112 Q132 126 146 112 Q160 124 174 112 Q188 126 202 112 Q215 123 228 112 L228 106 Q228 100 218 100 L102 100 Q92 100 92 106 Z" fill="#FFFFFF" />
+
+                        <!-- Decorative Pearls / Berries -->
+                        <circle cx="105" cy="100" r="4" fill="#C59B5F" />
+                        <circle cx="160" cy="100" r="4.5" fill="#B57B87" />
+                        <circle cx="215" cy="100" r="4" fill="#C59B5F" />
+                        <circle cx="85" cy="150" r="4" fill="#B57B87" />
+                        <circle cx="160" cy="150" r="4.5" fill="#C59B5F" />
+                        <circle cx="235" cy="150" r="4" fill="#B57B87" />
+                    </svg>
+                </div>
+
+                <!-- Post-Blowout Controls -->
+                <div id="post-blowout-actions" class="hidden flex-wrap items-center justify-center gap-3 mt-2">
+                    <span class="text-sm font-medium text-rose-deep">Yeay! Semoga semua harapan Mbak Rifa terkabul! 🎉</span>
+                    <button onclick="relightCandles(event)" class="text-xs px-3.5 py-1.5 rounded-full border border-gold-main/50 text-gold-dark hover:bg-gold-light/20 transition-colors cursor-pointer">
+                        🔥 Nyalakan Lagi Lilinnya
+                    </button>
+                </div>
+            </div>
+
+            <!-- Warm & Touching Birthday Message for Age 24 -->
+            <div class="px-6 sm:px-10 py-8 sm:py-10">
+                <div class="max-w-xl mx-auto space-y-4 text-charcoal/85 text-sm sm:text-base leading-relaxed">
+                    <p class="font-serif italic text-lg sm:text-xl text-charcoal">
+                        "Selamat memasuki usia 24 tahun, Mbak Rifa..."
+                    </p>
+                    <p>
+                        Di tanggal <strong class="font-semibold text-charcoal">26 November</strong> ini, semoga semesta selalu merayakan kehadiran samean dengan penuh kelembutan. Usia 24 bukan sekadar angka baru,ini adalah titik indah di mana langkah semakin matang, hati semakin lapang, dan mimpi semakin dekat untuk dipeluk satu per satu. Semangat Terus Mbaa, Aku belum bisa kasih apa apa buat samean, cuma ini yang aku bisa. Doa Terbaik Buat Samean.❤️❤️
+                    </p>
+                    <p>
+                        Terima kasih sudah bertahan sejauh ini, melewati setiap hari dengan sabar, tulus, dan senyum yang selalu menghangatkan orang-orang di sekitar samean. Kalau hari-hari ke depan terasa ramai atau melelahkan, semoga samean selalu menemukan ruang untuk bernapas lega, merasa dicintai, dan bangga pada diri sendiri.
+                    </p>
+                    <p>
+                        Semoga sehat selalu, dilancarkan segala urusan, rezeki, serta langkah baiknya. Teruslah bersinar dengan caranya samean sendiri yang apa adanya.
+                    </p>
+                    
+                    <div class="pt-4 flex items-center justify-between border-t border-gold-light/40">
+                        <div>
+                            <p class="text-xs text-charcoal/60">Dengan doa terbaik,</p>
+                            <p class="font-script text-2xl text-gold-dark mt-0.5">Untuk Mbak Rifa❤️</p>
+                        </div>
+                        <button onclick="triggerConfettiBurst()" class="px-4 py-2 rounded-full bg-rose-soft/80 hover:bg-rose-soft text-rose-deep text-xs font-semibold transition-all active:scale-95 cursor-pointer">
+                            🎊 Tabur Konfeti Lagi
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Gallery of Wish Cards (Kartu Harapan) -->
+            <div class="bg-cream-100/70 px-6 sm:px-10 py-8 sm:py-10 border-t border-gold-light/40">
+                <div class="text-center mb-6">
+                    <h2 class="font-serif text-2xl font-bold text-charcoal">
+                        4 Kado Doa di Usia 24
+                    </h2>
+                    <p class="text-xs sm:text-sm text-charcoal/65 mt-1">
+                        Ketuk setiap kartu di bawah ini untuk membuka doa spesialmu ✨
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Wish Card 1 -->
+                    <div onclick="revealWish(this, 0)" class="wish-card bg-white rounded-2xl p-5 border border-gold-light/60 shadow-xs cursor-pointer relative overflow-hidden group">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="w-9 h-9 rounded-full bg-rose-soft flex items-center justify-center text-lg">🌿</span>
+                            <span class="wish-badge text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-cream-100 text-gold-dark border border-gold-light/50">Ketuk untuk buka</span>
+                        </div>
+                        <h3 class="font-serif font-semibold text-base text-charcoal">Kapanpun Smn Butuh, Bilang aja Mbaaa, sebisa mungkin pasti aku ushain</h3>
+                        <p class="wish-text text-xs sm:text-sm text-charcoal/75 mt-2 leading-relaxed hidden">
+                            Jangan Pernah Bilang Ke Aku kalo Smn Sanggup Sendiri, Smn boleh kuat, Smn Boleh Mandiri, Smn Boleh Tegar, Tapi Kalo Sama Orang Lain. Jadi Diri sendiri yaa mbaaa kalo sama akuu....
+                        </p>
+                        <p class="wish-placeholder text-xs text-charcoal/45 italic mt-2">
+                            Klik kartu ini untuk melihat pesan...
+                        </p>
+                    </div>
+
+                    <!-- Wish Card 2 -->
+                    <div onclick="revealWish(this, 1)" class="wish-card bg-white rounded-2xl p-5 border border-gold-light/60 shadow-xs cursor-pointer relative overflow-hidden group">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="w-9 h-9 rounded-full bg-gold-light/40 flex items-center justify-center text-lg">✨</span>
+                            <span class="wish-badge text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-cream-100 text-gold-dark border border-gold-light/50">Ketuk untuk buka</span>
+                        </div>
+                        <h3 class="font-serif font-semibold text-base text-charcoal">Jangan Pernah Patah Semangat Mbaa, Dimanapun Smn Berada, Pasti Bakal Ada Orang Yang Sayang Dan Peduli Sama Samean</h3>
+                        <p class="wish-text text-xs sm:text-sm text-charcoal/75 mt-2 leading-relaxed hidden">
+                            Dan Semoga Aku Bisa Jadi Seseorang Itu Kali Ini. Sehat Sehat Terus mbaa, Suksesss....
+                        </p>
+                        <p class="wish-placeholder text-xs text-charcoal/45 italic mt-2">
+                            Klik kartu ini untuk melihat pesan...
+                        </p>
+                    </div>
+
+                    <!-- Wish Card 3 -->
+                    <div onclick="revealWish(this, 2)" class="wish-card bg-white rounded-2xl p-5 border border-gold-light/60 shadow-xs cursor-pointer relative overflow-hidden group">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="w-9 h-9 rounded-full bg-rose-soft flex items-center justify-center text-lg">🤍</span>
+                            <span class="wish-badge text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-cream-100 text-gold-dark border border-gold-light/50">Ketuk untuk buka</span>
+                        </div>
+                        <h3 class="font-serif font-semibold text-base text-charcoal">Kebahagiaan Sederhana</h3>
+                        <p class="wish-text text-xs sm:text-sm text-charcoal/75 mt-2 leading-relaxed hidden">
+                            Semoga dimanapun bumi dipijak, raga itu selalu dikelilingi orang-orang tulus yang menyayangimu, serta menemukan alasan untuk tersenyum di hal-hal kecil setiap hari.
+                        </p>
+                        <p class="wish-placeholder text-xs text-charcoal/45 italic mt-2">
+                            Klik kartu ini untuk melihat pesan...
+                        </p>
+                    </div>
+
+                    <!-- Wish Card 4 -->
+                    <div onclick="revealWish(this, 3)" class="wish-card bg-white rounded-2xl p-5 border border-gold-light/60 shadow-xs cursor-pointer relative overflow-hidden group">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="w-9 h-9 rounded-full bg-gold-light/40 flex items-center justify-center text-lg">🌷</span>
+                            <span class="wish-badge text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-cream-100 text-gold-dark border border-gold-light/50">Ketuk untuk buka</span>
+                        </div>
+                        <h3 class="font-serif font-semibold text-base text-charcoal">Terakhir Dari Aku</h3>
+                        <p class="wish-text text-xs sm:text-sm text-charcoal/75 mt-2 leading-relaxed hidden">
+                            Mungkin Cuma Ini Yang Bisa Aku Kasih Kali Ini Mbaa.. Aku Gatau Lagi Harus Gimana Bilang Nya Yang Jelas, Aku Bangga Dan Merasa Sangat Sangat Bersyukur Dan Beruntung Bisa Kenal Dan Jadi Bagian Dari Cerita Samean.
+                            Maaf lancang mbaa.. Aku ga pengen smn kenapa-napa, aku sayang smn sebagai mbak kuu..kalo aku salah kasih tau yaa mbaa, kalo aku keliru benerin, kalo aku kurang tambahin, kalo aku bingung arahin, Sekali Lagi Aku Banggaa Banggaaa Bangetttt Kenal Samean.<br>
+                            Happy Birthday Mbaa....❤️❤️❤️❤️
+                            <br>
+                            Dari Adek Muu yang paling Gantenggg
+                        </p>
+                        <p class="wish-placeholder text-xs text-charcoal/45 italic mt-2">
+                            Klik kartu ini untuk melihat pesan...
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Subtle Footer -->
+        <footer class="text-center mt-6 text-xs text-charcoal/50">
+            Dibuat khusus untuk merayakan 24 tahun Mbak Rifa • 26 November 2026
+          <p>Design By@Shaazzash</p>
+        </footer>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- JAVASCRIPT: AUDIO SYNTHESIZER, CONFETTI & INTERACTIONS                -->
+    <!-- ===================================================================== -->
+    <script>
+        // -------------------------------------------------------------------
+        // 1. WEB AUDIO API: Gentle Music Box "Happy Birthday" & Chime Effects
+        // -------------------------------------------------------------------
+        let audioCtx = null;
+        let isAudioPlaying = false;
+        let melodyTimeout = null;
+
+        // Happy Birthday melody notes (Frequencies in Hz & duration in seconds)
+        const birthdayMelody = [
+            { freq: 261.63, dur: 0.35 }, // C4 - Hap-
+            { freq: 261.63, dur: 0.25 }, // C4 - py
+            { freq: 293.66, dur: 0.60 }, // D4 - Birth-
+            { freq: 261.63, dur: 0.60 }, // C4 - day
+            { freq: 349.23, dur: 0.60 }, // F4 - to
+            { freq: 329.63, dur: 1.10 }, // E4 - you
+
+            { freq: 261.63, dur: 0.35 }, // C4 - Hap-
+            { freq: 261.63, dur: 0.25 }, // C4 - py
+            { freq: 293.66, dur: 0.60 }, // D4 - Birth-
+            { freq: 261.63, dur: 0.60 }, // C4 - day
+            { freq: 392.00, dur: 0.60 }, // G4 - to
+            { freq: 349.23, dur: 1.10 }, // F4 - you
+
+            { freq: 261.63, dur: 0.35 }, // C4 - Hap-
+            { freq: 261.63, dur: 0.25 }, // C4 - py
+            { freq: 523.25, dur: 0.60 }, // C5 - Birth-
+            { freq: 440.00, dur: 0.60 }, // A4 - day
+            { freq: 349.23, dur: 0.50 }, // F4 - Mbak
+            { freq: 329.63, dur: 0.50 }, // E4 - Ri-
+            { freq: 293.66, dur: 1.10 }, // D4 - fa
+
+            { freq: 466.16, dur: 0.35 }, // Bb4 - Hap-
+            { freq: 466.16, dur: 0.25 }, // Bb4 - py
+            { freq: 440.00, dur: 0.60 }, // A4 - Birth-
+            { freq: 349.23, dur: 0.60 }, // F4 - day
+            { freq: 392.00, dur: 0.60 }, // G4 - to
+            { freq: 349.23, dur: 1.30 }  // F4 - you
+        ];
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContextClass();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playMusicBoxNote(freq, duration) {
+            if (!audioCtx || !isAudioPlaying) return;
+            try {
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                // Sine + subtle triangle overtone for warm music box timbre
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, now);
+
+                gain.gain.setValueAtTime(0.001, now);
+                gain.gain.exponentialRampToValueAtTime(0.12, now + 0.03);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + duration + 0.4);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(now);
+                osc.stop(now + duration + 0.45);
+            } catch (e) {
+                console.warn('Audio playback skipped:', e);
+            }
+        }
+
+        function playSparkleChime() {
+            initAudioContext();
+            try {
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, idx) => {
+                    const now = audioCtx.currentTime + idx * 0.08;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now);
+                    gain.gain.setValueAtTime(0.001, now);
+                    gain.gain.exponentialRampToValueAtTime(0.09, now + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.65);
+                });
+            } catch (e) {}
+        }
+
+        function playBlowSound() {
+            initAudioContext();
+            try {
+                // Filtered white noise to simulate gentle candle blow
+                const bufferSize = audioCtx.sampleRate * 0.45;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = buffer;
+
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(600, audioCtx.currentTime);
+
+                const gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.45);
+
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+                noise.start();
+            } catch (e) {}
+        }
+
+        function startMelodyLoop(index = 0) {
+            if (!isAudioPlaying) return;
+            const note = birthdayMelody[index];
+            playMusicBoxNote(note.freq, note.dur);
+
+            const nextIndex = (index + 1) % birthdayMelody.length;
+            const pauseBetweenLoops = nextIndex === 0 ? 1400 : note.dur * 1000;
+
+            melodyTimeout = setTimeout(() => {
+                startMelodyLoop(nextIndex);
+            }, pauseBetweenLoops);
+        }
+
+        function updateAudioUI() {
+            const icon = document.getElementById('audio-icon');
+            const label = document.getElementById('audio-label');
+            if (isAudioPlaying) {
+                icon.textContent = '🎵';
+                label.textContent = 'Musik Aktif';
+            } else {
+                icon.textContent = '🔇';
+                label.textContent = 'Putar Melodi';
+            }
+        }
+
+        function toggleAudio() {
+            initAudioContext();
+            isAudioPlaying = !isAudioPlaying;
+            updateAudioUI();
+
+            if (isAudioPlaying) {
+                startMelodyLoop(0);
+            } else {
+                clearTimeout(melodyTimeout);
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // 2. CONFETTI PARTICLE ENGINE (Pastel Rose, Gold & Cream)
+        // -------------------------------------------------------------------
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let animationFrameId = null;
+
+        const confettiColors = [
+            '#D8A7B1', // Dusty Rose
+            '#C59B5F', // Warm Gold
+            '#E8D5B5', // Champagne Gold
+            '#F4E1E6', // Soft Blush
+            '#B57B87', // Deep Rose
+            '#FDE68A'  // Soft Sparkle Yellow
+        ];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function createConfettiParticles(count = 90) {
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    w: Math.random() * 9 + 5,
+                    h: Math.random() * 5 + 3,
+                    color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+                    speedY: Math.random() * 2.5 + 1.5,
+                    speedX: Math.random() * 2 - 1,
+                    rotation: Math.random() * 360,
+                    rotationSpeed: Math.random() * 6 - 3,
+                    opacity: Math.random() * 0.5 + 0.5
+                });
+            }
+        }
+
+        function renderConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach((p, index) => {
+                p.y += p.speedY;
+                p.x += p.speedX + Math.sin(p.y * 0.02) * 0.5;
+                p.rotation += p.rotationSpeed;
+
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate((p.rotation * Math.PI) / 180);
+                ctx.globalAlpha = p.opacity;
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                ctx.restore();
+
+                if (p.y > canvas.height + 20) {
+                    particles.splice(index, 1);
+                }
+            });
+
+            if (particles.length > 0) {
+                animationFrameId = requestAnimationFrame(renderConfetti);
+            } else {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        }
+
+        function triggerConfettiBurst(amount = 100) {
+            createConfettiParticles(amount);
+            if (!animationFrameId) {
+                renderConfetti();
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // 3. INTERACTIVE FLOW: ENVELOPE, CAKE CANDLES & WISH CARDS
+        // -------------------------------------------------------------------
+        let envelopeOpened = false;
+
+        function openEnvelope() {
+            if (envelopeOpened) return;
+            envelopeOpened = true;
+
+            const envelopeBox = document.getElementById('envelope-box');
+            const envelopeStage = document.getElementById('envelope-stage');
+            const cardStage = document.getElementById('card-stage');
+
+            // Animate envelope opening
+            envelopeBox.classList.add('envelope-open');
+
+            // Start gentle birthday melody automatically upon user gesture
+            initAudioContext();
+            if (!isAudioPlaying) {
+                isAudioPlaying = true;
+                updateAudioUI();
+                startMelodyLoop(0);
+            }
+
+            // Transition to main birthday card
+            setTimeout(() => {
+                envelopeStage.classList.add('opacity-0');
+                triggerConfettiBurst(120);
+
+                setTimeout(() => {
+                    envelopeStage.classList.add('hidden');
+                    cardStage.classList.remove('hidden');
+                    // Trigger reflow for smooth fade-in
+                    void cardStage.offsetWidth;
+                    cardStage.classList.remove('opacity-0');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 600);
+            }, 750);
+        }
+
+        let candlesLit = true;
+
+        function blowOutCandles() {
+            if (!candlesLit) return;
+            candlesLit = false;
+
+            playBlowSound();
+
+            // Extinguish flames & glow
+            document.getElementById('flame-2').classList.add('blown-out');
+            document.getElementById('flame-4').classList.add('blown-out');
+            document.getElementById('candle-glow').style.opacity = '0';
+
+            // Trigger rising smoke
+            const smoke1 = document.getElementById('smoke-1');
+            const smoke2 = document.getElementById('smoke-2');
+            smoke1.classList.remove('active');
+            smoke2.classList.remove('active');
+            void smoke1.offsetWidth;
+            smoke1.classList.add('active');
+            smoke2.classList.add('active');
+
+            // Update instruction & reveal celebration message
+            document.getElementById('candle-instruction').textContent = '✨ Permohonanmu telah diterbangkan ke langit!';
+            document.getElementById('candle-instruction').classList.remove('animate-pulse');
+            document.getElementById('post-blowout-actions').classList.remove('hidden');
+            document.getElementById('post-blowout-actions').classList.add('flex');
+
+            // Festive confetti & chime
+            setTimeout(() => {
+                playSparkleChime();
+                triggerConfettiBurst(140);
+            }, 300);
+        }
+
+        function relightCandles(event) {
+            event.stopPropagation();
+            candlesLit = true;
+
+            document.getElementById('flame-2').classList.remove('blown-out');
+            document.getElementById('flame-4').classList.remove('blown-out');
+            document.getElementById('candle-glow').style.opacity = '1';
+
+            document.getElementById('candle-instruction').textContent = '🕯️ Klik lilin "24" lagi untuk meniupnya!';
+            document.getElementById('candle-instruction').classList.add('animate-pulse');
+            document.getElementById('post-blowout-actions').classList.add('hidden');
+            document.getElementById('post-blowout-actions').classList.remove('flex');
+        }
+
+        function revealWish(cardElement, index) {
+            const wishText = cardElement.querySelector('.wish-text');
+            const placeholder = cardElement.querySelector('.wish-placeholder');
+            const badge = cardElement.querySelector('.wish-badge');
+
+            if (wishText.classList.contains('hidden')) {
+                wishText.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+                badge.textContent = 'Terbuka ✨';
+                badge.classList.remove('bg-cream-100', 'text-gold-dark');
+                badge.classList.add('bg-rose-soft', 'text-rose-deep');
+                cardElement.classList.add('ring-2', 'ring-gold-main/40', 'bg-cream-50');
+                
+                playSparkleChime();
+                triggerConfettiBurst(35);
+            }
+        }
+    </script>
+</body>
+</html>
